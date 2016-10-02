@@ -19,6 +19,11 @@ defmodule LQueueTest do
     refute lqueue |> full?()
   end
 
+  test "clear the queue", %{lqueue: lqueue} do
+    assert lqueue |> clear() |> to_list == []
+    assert ["X", "Y", "Z"] |> from_list(3) |> clear() |> to_list == []
+  end
+
   test "number of items in lqueue", %{lqueue: lqueue} do
     assert lqueue |> LQueue.length() == 0
     assert lqueue |> push(100) |> LQueue.length() == 1

@@ -82,6 +82,21 @@ defmodule LQueue do
   def full?(_lqueue), do: false
 
   @doc """
+  Removes all the elements from the queue.
+
+  ## Examples
+
+      iex> [] |> LQueue.from_list(5) |> LQueue.clear() |> LQueue.to_list == []
+      true
+
+      iex> [1, 2, 3] |> LQueue.from_list(5) |> LQueue.clear() |>
+      ...> LQueue.to_list == []
+      true
+  """
+  @spec clear(lqueue) :: lqueue
+  def clear({_len, m_len, _r, _f}), do: {0, m_len, [], []}
+
+  @doc """
   Returns the number of elements in the queue
 
   ## Examples
