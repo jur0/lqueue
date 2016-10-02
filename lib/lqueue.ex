@@ -36,7 +36,7 @@ defmodule LQueue do
   number of elements, max number of elements, rear list and front list.
   Note that this structure should be considered as opaque by other modules.
   """
-  @opaque lqueue :: {length, max_length, [element], [element]}
+  @opaque t :: {length, max_length, [element], [element]}
 
   @doc """
   Creates a new limited lenght queue.
@@ -49,7 +49,7 @@ defmodule LQueue do
       iex> LQueue.new(5)
       {0, 5, [], []}
   """
-  @spec new(max_length) :: lqueue
+  @spec new(max_length) :: t
   def new(m_len) when m_len > 0, do: {0, m_len, [], []}
 
   @doc """
@@ -63,7 +63,7 @@ defmodule LQueue do
       iex> [1, 2, 3] |> LQueue.from_list(3) |> LQueue.empty?()
       false
   """
-  @spec empty?(lqueue) :: boolean
+  @spec empty?(t) :: boolean
   def empty?(lqueue), do: length(lqueue) == 0
 
   @doc """
@@ -77,7 +77,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(2) |> LQueue.full?()
       true
   """
-  @spec full?(lqueue) :: boolean
+  @spec full?(t) :: boolean
   def full?({m_len, m_len, _r, _f}), do: true
   def full?(_lqueue), do: false
 
@@ -93,7 +93,7 @@ defmodule LQueue do
       ...> LQueue.to_list == []
       true
   """
-  @spec clear(lqueue) :: lqueue
+  @spec clear(t) :: t
   def clear({_len, m_len, _r, _f}), do: {0, m_len, [], []}
 
   @doc """
@@ -107,7 +107,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(2) |> LQueue.length()
       2
   """
-  @spec length(lqueue) :: length
+  @spec length(t) :: length
   def length({len, _m_len, _r, _f}), do: len
 
   @doc """
@@ -121,7 +121,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(2) |> LQueue.max_length()
       2
   """
-  @spec max_length(lqueue) :: max_length
+  @spec max_length(t) :: max_length
   def max_length({_len, m_len, _r, _f}), do: m_len
 
   @doc """
@@ -135,7 +135,7 @@ defmodule LQueue do
       iex> [1, 2, 3] |> LQueue.from_list(3) |> LQueue.member?(2)
       true
   """
-  @spec member?(lqueue, element) :: boolean
+  @spec member?(t, element) :: boolean
   def member?({len, _m_len, r, f}, elem) when len > 0 do
     Enum.member?(r, elem) or Enum.member?(f, elem)
   end
@@ -154,7 +154,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(2) |> LQueue.push(10) |> LQueue.to_list()
       [2, 10]
   """
-  @spec push(lqueue, element) :: lqueue
+  @spec push(t, element) :: t
   def push({len, m_len, r, f}, elem) when len < m_len do
     {len + 1, m_len, [elem|r], f}
   end
@@ -180,7 +180,7 @@ defmodule LQueue do
       ...> LQueue.to_list()
       [5, 1]
   """
-  @spec push_front(lqueue, element) :: lqueue
+  @spec push_front(t, element) :: t
   def push_front({len, m_len, r, f}, elem) when len < m_len do
     {len + 1, m_len, r, [elem|f]}
   end
@@ -208,7 +208,7 @@ defmodule LQueue do
       iex> lqueue |> LQueue.to_list() == [2]
       true
   """
-  @spec pop(lqueue) :: {element | nil, lqueue}
+  @spec pop(t) :: {element | nil, t}
   def pop({0, _m_len, [], []} = lqueue), do: {nil, lqueue}
   def pop({len, m_len, r, [fh|ft]}), do: {fh, {len - 1, m_len, r, ft}}
   def pop({len, m_len, r, []}) do
@@ -232,7 +232,7 @@ defmodule LQueue do
       iex> lqueue |> LQueue.to_list() == [1]
       true
   """
-  @spec pop_rear(lqueue) :: {element | nil, lqueue}
+  @spec pop_rear(t) :: {element | nil, t}
   def pop_rear({0, _m_len, [], []} = lqueue), do: {nil, lqueue}
   def pop_rear({len, m_len, [rh|rt], f}), do: {rh, {len - 1, m_len, rt, f}}
   def pop_rear({len, m_len, [], f}) do
@@ -252,7 +252,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(2) |> LQueue.get()
       1
   """
-  @spec get(lqueue) :: element | nil
+  @spec get(t) :: element | nil
   def get({0, _m_len, [], []}), do: nil
   def get({_len, _m_len, r, f}), do: get(r, f)
 
@@ -268,7 +268,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(2) |> LQueue.get_rear()
       2
   """
-  @spec get_rear(lqueue) :: element | nil
+  @spec get_rear(t) :: element | nil
   def get_rear({0, _m_len, [], []}), do: nil
   def get_rear({_len, _m_len, r, f}), do: get_rear(r, f)
 
@@ -285,7 +285,7 @@ defmodule LQueue do
       ...> LQueue.to_list()
       [2, 3]
   """
-  @spec drop(lqueue) :: lqueue
+  @spec drop(t) :: t
   def drop({0, _m_len, [], []} = lqueue), do: lqueue
   def drop({len, m_len, r, [_fh|ft]}), do: {len - 1, m_len, r, ft}
   def drop({len, m_len, r, []}) do
@@ -306,7 +306,7 @@ defmodule LQueue do
       ...> LQueue.to_list()
       [1, 2]
   """
-  @spec drop_rear(lqueue) :: lqueue
+  @spec drop_rear(t) :: t
   def drop_rear({0, _m_len, [], []} = lqueue), do: lqueue
   def drop_rear({len, m_len, [_rf|rt], f}), do: {len - 1, m_len, rt, f}
   def drop_rear({len, m_len, [], f}) do
@@ -326,7 +326,7 @@ defmodule LQueue do
       ...> LQueue.to_list()
       [3, 2, 1]
   """
-  @spec reverse(lqueue) :: lqueue
+  @spec reverse(t) :: t
   def reverse({len, m_len, r, f}), do: {len, m_len, f, r}
 
   @doc """
@@ -339,7 +339,7 @@ defmodule LQueue do
       ...> LQueue.to_list
       [3]
   """
-  @spec filter(lqueue, (element -> boolean)) :: lqueue
+  @spec filter(t, (element -> boolean)) :: t
   def filter({len, m_len, r, f}, fun) do
     {len, m_len, Enum.filter(r, fun), Enum.filter(f, fun)}
   end
@@ -360,7 +360,7 @@ defmodule LQueue do
       iex> [1, 2, 3, 4, 5] |> LQueue.from_list(3) |> LQueue.to_list()
       [1, 2, 3]
   """
-  @spec from_list([element], max_length) :: lqueue
+  @spec from_list([element], max_length) :: t
   def from_list([], m_len) when m_len > 0, do: new(m_len)
   def from_list(list, m_len) when is_list(list) and m_len > 0 do
     len = Kernel.length(list)
@@ -382,7 +382,7 @@ defmodule LQueue do
       iex> [1, 2] |> LQueue.from_list(4) |> LQueue.to_list()
       [1, 2]
   """
-  @spec to_list(lqueue) :: [element]
+  @spec to_list(t) :: [element]
   def to_list({_len, _m_len, r, f}), do: f ++ Enum.reverse(r, [])
 
   defp get(_, [fh|_]), do: fh
