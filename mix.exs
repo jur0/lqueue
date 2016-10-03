@@ -26,9 +26,7 @@ defmodule LQueue.Mixfile do
   end
 
   defp description do
-    """
-    Double-ended queue with limited length.
-    """
+    "Double-ended queue with limited length"
   end
 
   defp package do
