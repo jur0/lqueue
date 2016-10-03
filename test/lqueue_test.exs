@@ -9,65 +9,48 @@ defmodule LQueueTest do
     {:ok, lqueue: new(@lqueue_size)}
   end
 
-  test "lqueue is (not) empty", %{lqueue: lqueue} do
-    assert lqueue |> empty?()
-    refute lqueue |> push("abc") |> empty?()
+  test "lqueue is (not) full", %{lqueue: lq} do
+    assert lq |> push("a") |> push("b") |> push("c") |> full?()
+    refute lq |> full?()
   end
 
-  test "lqueue is (not) full", %{lqueue: lqueue} do
-    assert lqueue |> push("a") |> push("b") |> push("c") |> full?()
-    refute lqueue |> full?()
+  test "clear the queue", %{lqueue: lq} do
+    assert lq |> clear() |> Enum.to_list == []
+    assert ["X", "Y", "Z"] |> from_list(3) |> clear() |> Enum.to_list == []
   end
 
-  test "clear the queue", %{lqueue: lqueue} do
-    assert lqueue |> clear() |> to_list == []
-    assert ["X", "Y", "Z"] |> from_list(3) |> clear() |> to_list == []
+  test "max count of the queue", %{lqueue: lq} do
+    assert lq |> max_count() == @lqueue_size
   end
 
-  test "number of items in lqueue", %{lqueue: lqueue} do
-    assert lqueue |> LQueue.length() == 0
-    assert lqueue |> push(100) |> LQueue.length() == 1
-  end
-
-  test "max size of queue is @lqueue_size", %{lqueue: lqueue} do
-    assert lqueue |> max_length() == @lqueue_size
-  end
-
-  test "check an element is a member of the lqueue", %{lqueue: lqueue} do
-    refute lqueue |> member?(?X)
-    refute ["test"] |> from_list(1) |> member?("xyz")
-    assert [10, 20] |> from_list(5) |> member?(20)
-    assert [10, -20] |> from_list(2) |> member?(10)
-  end
-
-  test "push items to the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> push(1) |> push(2) |> to_list() == [1, 2]
-    assert lqueue
+  test "push items to the lqueue", %{lqueue: lq} do
+    assert lq |> push(1) |> push(2) |> Enum.to_list() == [1, 2]
+    assert lq
     |> push(:foo)
     |> push(:bar)
     |> push(:baz)
-    |> to_list() == [:foo, :bar, :baz]
+    |> Enum.to_list() == [:foo, :bar, :baz]
     assert [10, :a, "xy"]
     |> from_list(3)
     |> push("abc")
-    |> to_list() == [:a, "xy", "abc"]
+    |> Enum.to_list() == [:a, "xy", "abc"]
   end
 
-  test "push items to the lqueue (front)", %{lqueue: lqueue} do
-    assert lqueue |> push_front(1) |> push_front(2) |> to_list() == [2, 1]
-    assert lqueue
+  test "push items to the lqueue (front)", %{lqueue: lq} do
+    assert lq |> push_front(1) |> push_front(2) |> Enum.to_list() == [2, 1]
+    assert lq
     |> push_front(:foo)
     |> push(:bar)
     |> push_front(:baz)
-    |> to_list() == [:baz, :foo, :bar]
+    |> Enum.to_list() == [:baz, :foo, :bar]
     assert [10, :a, "xy"]
     |> from_list(3)
     |> push_front("abc")
-    |> to_list() == ["abc", 10, :a]
+    |> Enum.to_list() == ["abc", 10, :a]
   end
 
-  test "pop items from the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> pop |> result_check(nil, [])
+  test "pop items from the lqueue", %{lqueue: lq} do
+    assert lq |> pop |> result_check(nil, [])
     assert from_list([1], 1) |> pop |> result_check(1, [])
     assert [:foo, :bar]
     |> from_list(5)
@@ -77,11 +60,11 @@ defmodule LQueueTest do
     |> from_list(2)
     |> push("x")
     |> pop()
-    |> result_check("B", ["x"])
+    |> result_check("cc", ["x"])
   end
 
-  test "pop items from the lqueue (rear)", %{lqueue: lqueue} do
-    assert lqueue |> pop_rear() |> result_check(nil, [])
+  test "pop items from the lqueue (rear)", %{lqueue: lq} do
+    assert lq |> pop_rear() |> result_check(nil, [])
     assert from_list([1], 1) |> pop_rear() |> result_check(1, [])
     assert [:foo, :bar]
     |> from_list(5)
@@ -91,52 +74,75 @@ defmodule LQueueTest do
     |> from_list(2)
     |> push("x")
     |> pop_rear()
-    |> result_check("x", ["B"])
+    |> result_check("x", ["cc"])
   end
 
-  test "get items from the top of the lqueue", %{lqueue: lqueue} do
-    assert get(lqueue) == nil
+  test "get items from the top of the lqueue", %{lqueue: lq} do
+    assert get(lq) == nil
     assert [-10, -5, 0] |> from_list(3) |> get() == -10
   end
 
-  test "get items from the rear of the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> get_rear() == nil
+  test "get items from the rear of the lqueue", %{lqueue: lq} do
+    assert lq |> get_rear() == nil
     assert [-10, -5, 0] |> from_list(3) |> get_rear() == 0
   end
 
-  test "drop items from the top of the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> drop() |> to_list() == []
-    assert [:a, :b] |> from_list(2) |> drop() |> to_list() == [:b]
+  test "drop items from the top of the lqueue", %{lqueue: lq} do
+    assert lq |> drop() |> Enum.to_list() == []
+    assert [:a, :b] |> from_list(2) |> drop() |> Enum.to_list() == [:b]
   end
 
-  test "drop items from the rear of the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> drop_rear() |> to_list() == []
-    assert [:a, :b] |> from_list(2) |> drop_rear() |> to_list() == [:a]
+  test "drop items from the rear of the lqueue", %{lqueue: lq} do
+    assert lq |> drop_rear() |> Enum.to_list() == []
+    assert [:a, :b] |> from_list(2) |> drop_rear() |> Enum.to_list() == [:a]
   end
 
-  test "reverse items in the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> reverse() |> to_list() == []
-    assert [-1, 0, 1] |> from_list(5) |> reverse() |> to_list() == [1, 0, -1]
+  test "create lqueue from list, convert to list", %{lqueue: lq} do
+    assert lq |> Enum.to_list() == []
+    assert [] |> from_list(3) |> Enum.to_list() == []
+    assert [1] |> from_list(3) |> Enum.to_list() == [1]
+    assert [1, 2, 3] |> from_list(3) |> Enum.to_list() == [1, 2, 3]
+    assert [:a, :b, :c, :d] |> from_list(2) |> Enum.to_list() == [:c, :d]
   end
 
-  test "filter items in the lqueue", %{lqueue: lqueue} do
-    assert lqueue |> filter(fn(x) -> x == true end) |> to_list() == []
-    assert [1, 2, 3, 4, 5]
-    |> from_list(10)
-    |> filter(fn(x) -> rem(x, 2) == 0 end)
-    |> to_list() == [2, 4]
+  test "Enum count", %{lqueue: lq} do
+    assert lq |> Enum.count == 0
+    assert [:foo, :bar] |> LQueue.from_list(3) |> Enum.count == 2
   end
 
-  test "create lqueue from list, convert to list", %{lqueue: lqueue} do
-    assert lqueue |> to_list() == []
-    assert [] |> from_list(3) |> to_list() == []
-    assert [1] |> from_list(3) |> to_list() == [1]
-    assert [1, 2, 3] |> from_list(3) |> to_list() == [1, 2, 3]
-    assert [:a, :b, :c, :d] |> from_list(2) |> to_list() == [:a, :b]
+  test "Enum member", %{lqueue: lq} do
+    refute lq |> Enum.member?("X")
+    assert [1, 2, 3] |> from_list(3) |> Enum.member?(3)
+    assert [1, 2, 3] |> from_list(3) |> push_front(10) |> Enum.member?(10)
   end
 
-  defp result_check({res_item, res_lqueue}, item, list) do
-    {res_item, to_list(res_lqueue)} == {item, list}
+  test "Enum reduce", %{lqueue: lq} do
+    assert_raise Enum.EmptyError, fn ->
+      lq |> Enum.reduce(fn(x, acc) -> x * acc end) == 0
+    end
+    assert lq |> push(10) |> Enum.reduce(fn(x, acc) -> x * acc end) == 10
+    assert [1, 2, 3]
+    |> from_list(5)
+    |> push(10)
+    |> push_front(10)
+    |> Enum.reduce(0, fn(x, acc) -> x + acc end) == 26
+  end
+
+  test "Stream map and filter", %{lqueue: lq} do
+    assert lq |> Stream.map(fn(x) -> x * x end) |> Enum.to_list == []
+    assert ["A", "b", "C"]
+    |> from_list(5)
+    |> Stream.filter(fn(x) -> x == String.upcase(x) end)
+    |> Enum.to_list == ["A", "C"]
+  end
+
+  test "Collectable into" do
+    assert [1, 2, 3, 4, 5] |> Enum.into(new(3)) |> Enum.to_list == [3, 4, 5]
+    assert %{a: 1, b: 2} |> Enum.into(new(10)) |> Enum.to_list == [a: 1, b: 2]
+  end
+
+  defp result_check({res_item, res_lq}, item, list) do
+    {res_item, Enum.to_list(res_lq)} == {item, list}
   end
 
 end
