@@ -10,7 +10,7 @@ Double-ended queue with limited length.
 
     ```elixir
     def deps do
-      [{:lqueue, "~> 0.1.0"}]
+      [{:lqueue, "~> 1.0.0"}]
     end
     ```
 
