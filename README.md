@@ -1,5 +1,7 @@
 # LQueue
 
+[![Build Status](https://travis-ci.org/jur0/lqueue.svg?branch=master)](https://travis-ci.org/jur0/lqueue)
+
 Double-ended queue with limited length.
 
 ## Installation
