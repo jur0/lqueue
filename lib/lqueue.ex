@@ -311,13 +311,9 @@ defmodule LQueue do
   @spec from_list([element], max_count) :: t
   def from_list([], m_len) when m_len > 0, do: new(m_len)
   def from_list(list, m_len) when is_list(list) and m_len > 0 do
-    len = length(list)
-    if m_len >= len do
-      %LQueue{len: len, m_len: m_len, r: Enum.reverse(list), f: []}
-    else
-      %LQueue{len: m_len, m_len: m_len,
-        r: list |> Enum.reverse() |> Enum.take(m_len), f: []}
-    end
+    len = list |> length |> min(m_len)
+    r = list |> Enum.reverse() |> Enum.take(m_len)
+    %LQueue{len: len, m_len: m_len, r: r, f: []}
   end
 
   ## Internal functions
