@@ -12,7 +12,7 @@ of elements. If more are added, the elements from the top of the queue are
 
     ```elixir
     def deps do
-      [{:lqueue, "~> 1.0.0"}]
+      [{:lqueue, "~> 1.0"}]
     end
     ```
 
