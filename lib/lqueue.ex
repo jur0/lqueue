@@ -44,7 +44,7 @@ defmodule LQueue do
   }
 
   @doc """
-  Creates a new limited lenght queue.
+  Creates a new limited length queue.
 
   ## Examples
 
