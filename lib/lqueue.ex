@@ -13,13 +13,13 @@ defmodule LQueue do
   the new front when the front is empty.
   """
 
-  defstruct len: 0, m_len: 1, r: [], f: []
+  defstruct count: 0, max_count: 1, r: [], f: []
 
   @typedoc """
   The current number of elements in the queue. The number is an integer between
   `0` and `max_count`
   """
-  @type length :: non_neg_integer
+  @type count :: non_neg_integer
 
   @typedoc """
   The max number of elements in the queue.
@@ -37,8 +37,8 @@ defmodule LQueue do
   Note that this structure should be considered as opaque by other modules.
   """
   @type t :: %LQueue{
-    len: length,
-    m_len: max_count,
+    count: count,
+    max_count: max_count,
     r: [element],
     f: [element]
   }
@@ -49,13 +49,13 @@ defmodule LQueue do
   ## Examples
 
       iex> LQueue.new(1)
-      %LQueue{len: 0, m_len: 1, r: [], f: []}
+      %LQueue{count: 0, max_count: 1, r: [], f: []}
 
       iex> LQueue.new(5)
-      %LQueue{len: 0, m_len: 5, r: [], f: []}
+      %LQueue{count: 0, max_count: 5, r: [], f: []}
   """
   @spec new(max_count) :: t
-  def new(m_len) when m_len > 0, do: %LQueue{m_len: m_len}
+  def new(max_count) when max_count > 0, do: %LQueue{max_count: max_count}
 
   @doc """
   Checks if the queue is full.
@@ -69,7 +69,7 @@ defmodule LQueue do
       true
   """
   @spec full?(t) :: boolean
-  def full?(%LQueue{len: m_len, m_len: m_len}), do: true
+  def full?(%LQueue{count: max_count, max_count: max_count}), do: true
   def full?(_lq), do: false
 
   @doc """
@@ -85,7 +85,7 @@ defmodule LQueue do
       true
   """
   @spec clear(t) :: t
-  def clear(%LQueue{m_len: m_len}), do: %LQueue{m_len: m_len}
+  def clear(%LQueue{max_count: max_count}), do: %LQueue{max_count: max_count}
 
   @doc """
   Returns the max number of elements the queue can hold.
@@ -99,7 +99,7 @@ defmodule LQueue do
       2
   """
   @spec max_count(t) :: max_count
-  def max_count(%LQueue{m_len: m_len}), do: m_len
+  def max_count(%LQueue{max_count: max_count}), do: max_count
 
   @doc """
   Pushes a new element to the rear of the queue. When pushing to a full queue,
@@ -115,14 +115,14 @@ defmodule LQueue do
       [2, 10]
   """
   @spec push(t, element) :: t
-  def push(%LQueue{len: len, m_len: m_len, r: r} = lq, elem)
-      when len < m_len do
-    %{lq | len: len + 1, r: [elem|r]}
+  def push(%LQueue{count: count, max_count: max_count, r: r} = lq, elem)
+      when count < max_count do
+    %{lq | count: count + 1, r: [elem|r]}
   end
-  def push(%LQueue{len: m_len, m_len: m_len, r: r, f: [_fh|ft]} = lq, elem) do
+  def push(%LQueue{count: max_count, max_count: max_count, r: r, f: [_fh|ft]} = lq, elem) do
     %{lq | r: [elem|r], f: ft}
   end
-  def push(%LQueue{len: m_len, m_len: m_len, r: r, f: []} = lq, elem) do
+  def push(%LQueue{count: max_count, max_count: max_count, r: r, f: []} = lq, elem) do
     [_fh|ft] = Enum.reverse(r)
     %{lq | r: [elem], f: ft}
   end
@@ -142,14 +142,14 @@ defmodule LQueue do
       [5, 1]
   """
   @spec push_front(t, element) :: t
-  def push_front(%LQueue{len: len, m_len: m_len, f: f} = lq, elem)
-      when len < m_len do
-    %{lq | len: len + 1, f: [elem|f]}
+  def push_front(%LQueue{count: count, max_count: max_count, f: f} = lq, elem)
+      when count < max_count do
+    %{lq | count: count + 1, f: [elem|f]}
   end
-  def push_front(%LQueue{len: m_len, m_len: m_len, r: [_rh|rt], f: f} = lq, elem) do
+  def push_front(%LQueue{count: max_count, max_count: max_count, r: [_rh|rt], f: f} = lq, elem) do
     %{lq | r: rt, f: [elem|f]}
   end
-  def push_front(%LQueue{len: m_len, m_len: m_len, r: [], f: f} = lq, elem) do
+  def push_front(%LQueue{count: max_count, max_count: max_count, r: [], f: f} = lq, elem) do
     [_rh|rt] = Enum.reverse(f)
     %{lq | r: rt, f: [elem]}
   end
@@ -161,25 +161,25 @@ defmodule LQueue do
   ## Examples
 
       iex> {nil, lqueue} = [] |> LQueue.from_list(5) |> LQueue.pop()
-      {nil, %LQueue{len: 0, m_len: 5, r: [], f: []}}
+      {nil, %LQueue{count: 0, max_count: 5, r: [], f: []}}
       iex> lqueue |> Enum.to_list() == []
       true
 
       iex> {1, lqueue} = [1, 2] |> LQueue.from_list(2) |> LQueue.pop()
-      {1, %LQueue{len: 1, m_len: 2, r: [], f: [2]}}
+      {1, %LQueue{count: 1, max_count: 2, r: [], f: [2]}}
       iex> lqueue |> Enum.to_list() == [2]
       true
   """
   @spec pop(t) :: {element | nil, t}
-  def pop(%LQueue{len: 0, r: [], f: []} = lq) do
+  def pop(%LQueue{count: 0, r: [], f: []} = lq) do
     {nil, lq}
   end
-  def pop(%LQueue{len: len, f: [fh|ft]} = lq) do
-    {fh, %{lq | len: len - 1, f: ft}}
+  def pop(%LQueue{count: count, f: [fh|ft]} = lq) do
+    {fh, %{lq | count: count - 1, f: ft}}
   end
-  def pop(%LQueue{len: len, r: r, f: []} = lq) do
+  def pop(%LQueue{count: count, r: r, f: []} = lq) do
     [fh|ft] = Enum.reverse(r)
-    {fh, %{lq | len: len - 1, r: [], f: ft}}
+    {fh, %{lq | count: count - 1, r: [], f: ft}}
   end
 
   @doc """
@@ -189,25 +189,25 @@ defmodule LQueue do
   ## Examples
 
       iex> {nil, lqueue} = [] |> LQueue.from_list(5) |> LQueue.pop_rear()
-      {nil, %LQueue{len: 0, m_len: 5, r: [], f: []}}
+      {nil, %LQueue{count: 0, max_count: 5, r: [], f: []}}
       iex> lqueue |> Enum.to_list() == []
       true
 
       iex> {2, lqueue} = [1, 2] |> LQueue.from_list(2) |> LQueue.pop_rear()
-      {2, %LQueue{len: 1, m_len: 2, r: [1], f: []}}
+      {2, %LQueue{count: 1, max_count: 2, r: [1], f: []}}
       iex> lqueue |> Enum.to_list() == [1]
       true
   """
   @spec pop_rear(t) :: {element | nil, t}
-  def pop_rear(%LQueue{len: 0, r: [], f: []} = lq) do
+  def pop_rear(%LQueue{count: 0, r: [], f: []} = lq) do
     {nil, lq}
   end
-  def pop_rear(%LQueue{len: len, r: [rh|rt]} = lq) do
-    {rh, %{lq | len: len - 1, r: rt}}
+  def pop_rear(%LQueue{count: count, r: [rh|rt]} = lq) do
+    {rh, %{lq | count: count - 1, r: rt}}
   end
-  def pop_rear(%LQueue{len: len, r: [], f: f} = lq) do
+  def pop_rear(%LQueue{count: count, r: [], f: f} = lq) do
     [rh|rt] = Enum.reverse(f)
-    {rh, %{lq | len: len - 1, r: rt, f: []}}
+    {rh, %{lq | count: count - 1, r: rt, f: []}}
   end
 
   @doc """
@@ -223,7 +223,7 @@ defmodule LQueue do
       1
   """
   @spec get(t) :: element | nil
-  def get(%LQueue{len: 0, r: [], f: []}), do: nil
+  def get(%LQueue{count: 0, r: [], f: []}), do: nil
   def get(%LQueue{r: r, f: f}), do: get(r, f)
 
   @doc """
@@ -239,7 +239,7 @@ defmodule LQueue do
       2
   """
   @spec get_rear(t) :: element | nil
-  def get_rear(%LQueue{len: 0, r: [], f: []}), do: nil
+  def get_rear(%LQueue{count: 0, r: [], f: []}), do: nil
   def get_rear(%LQueue{r: r, f: f}), do: get_rear(r, f)
 
   @doc """
@@ -256,15 +256,15 @@ defmodule LQueue do
       [2, 3]
   """
   @spec drop(t) :: t
-  def drop(%LQueue{len: 0, r: [], f: []} = lq) do
+  def drop(%LQueue{count: 0, r: [], f: []} = lq) do
     lq
   end
-  def drop(%LQueue{len: len, f: [_fh|ft]} = lq) do
-    %{lq | len: len - 1, f: ft}
+  def drop(%LQueue{count: count, f: [_fh|ft]} = lq) do
+    %{lq | count: count - 1, f: ft}
   end
-  def drop(%LQueue{len: len, r: r, f: []} = lq) do
+  def drop(%LQueue{count: count, r: r, f: []} = lq) do
     [_fh|ft] = Enum.reverse(r)
-    %{lq | len: len - 1, r: [], f: ft}
+    %{lq | count: count - 1, r: [], f: ft}
   end
 
   @doc """
@@ -281,15 +281,15 @@ defmodule LQueue do
       [1, 2]
   """
   @spec drop_rear(t) :: t
-  def drop_rear(%LQueue{len: 0, r: [], f: []} = lq) do
+  def drop_rear(%LQueue{count: 0, r: [], f: []} = lq) do
     lq
   end
-  def drop_rear(%LQueue{len: len, r: [_rf|rt]} = lq) do
-    %{lq | len: len - 1, r: rt}
+  def drop_rear(%LQueue{count: count, r: [_rf|rt]} = lq) do
+    %{lq | count: count - 1, r: rt}
   end
-  def drop_rear(%LQueue{len: len, r: [], f: f} = lq) do
+  def drop_rear(%LQueue{count: count, r: [], f: f} = lq) do
     [_rh|rt] = Enum.reverse(f)
-    %{lq | len: len - 1, r: rt, f: []}
+    %{lq | count: count - 1, r: rt, f: []}
   end
 
   @doc """
@@ -309,11 +309,11 @@ defmodule LQueue do
       [3, 4, 5]
   """
   @spec from_list([element], max_count) :: t
-  def from_list([], m_len) when m_len > 0, do: new(m_len)
-  def from_list(list, m_len) when is_list(list) and m_len > 0 do
-    len = list |> length |> min(m_len)
-    r = list |> Enum.reverse() |> Enum.take(m_len)
-    %LQueue{len: len, m_len: m_len, r: r, f: []}
+  def from_list([], max_count) when max_count > 0, do: new(max_count)
+  def from_list(list, max_count) when is_list(list) and max_count > 0 do
+    count = list |> length |> min(max_count)
+    r = list |> Enum.reverse() |> Enum.take(max_count)
+    %LQueue{count: count, max_count: max_count, r: r, f: []}
   end
 
   ## Internal functions
@@ -329,13 +329,13 @@ end
 defimpl Enumerable, for: LQueue do
 
   @spec count(LQueue.t) :: {:ok, non_neg_integer}
-  def count(%LQueue{len: len}), do: {:ok, len}
+  def count(%LQueue{count: count}), do: {:ok, count}
 
   @spec member?(LQueue.t, term) :: {:ok, boolean}
-  def member?(%LQueue{len: len, r: r, f: f}, value) when len > 0 do
+  def member?(%LQueue{count: count, r: r, f: f}, value) when count > 0 do
     {:ok, Enum.member?(f, value) or Enum.member?(r, value)}
   end
-  def member?(%LQueue{len: 0, r: [], f: []}, _value) do
+  def member?(%LQueue{count: 0, r: [], f: []}, _value) do
     {:ok, false}
   end
 
@@ -347,13 +347,13 @@ defimpl Enumerable, for: LQueue do
   def reduce(%LQueue{} = lq, {:suspend, acc}, fun) do
     {:suspended, acc, &reduce(lq, &1, fun)}
   end
-  def reduce(%LQueue{len: len, f: [fh|ft]} = lq, {:cont, acc}, fun) do
-    reduce(%{lq | len: len - 1, f: ft}, fun.(fh, acc), fun)
+  def reduce(%LQueue{count: count, f: [fh|ft]} = lq, {:cont, acc}, fun) do
+    reduce(%{lq | count: count - 1, f: ft}, fun.(fh, acc), fun)
   end
-  def reduce(%LQueue{len: len, r: r, f: []} = lq, {:cont, acc}, fun)
+  def reduce(%LQueue{count: count, r: r, f: []} = lq, {:cont, acc}, fun)
       when r != [] do
     [fh|ft] = Enum.reverse(r)
-    reduce(%{lq | len: len - 1, r: [], f: ft}, fun.(fh, acc), fun)
+    reduce(%{lq | count: count - 1, r: [], f: ft}, fun.(fh, acc), fun)
   end
   def reduce(%LQueue{r: [], f: []}, {:cont, acc}, _fun) do
     {:done, acc}
