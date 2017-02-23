@@ -3,10 +3,10 @@ defmodule LQueue do
   Functions that work on the double-ended queue with limited length.
 
   `[1, 2, 3]` queue has the front at the element `1` and the rear at `3`.
-  By pushing a new element to the queue (`4`), and assuming that the max length
-  of the queue is 3, we will get `[2, 3, 4]` (the `push/2` function). Also, it
-  is possible to push to the front of the queue. In this case, by pushing `4`
-  to the front (`push_front/2`) we will get `[4, 1, 2]`.
+  By pushing a new element to the queue (`4`), and assuming that the max
+  length of the queue is 3, we will get `[2, 3, 4]` (the `push/2` function).
+  Also, it is possible to push to the front of the queue. In this case, by
+  pushing `4` to the front (`push_front/2`) we will get `[4, 1, 2]`.
 
   Due to efficiency reasons, the limited length queue is implemented as two
   lists - the front and the rear list. The rear end is reversed and becomes
@@ -16,8 +16,9 @@ defmodule LQueue do
   defstruct count: 0, max_count: 1, r: [], f: []
 
   @typedoc """
-  The current number of elements in the queue. The number is an integer between
-  `0` and `max_count`
+  The current number of elements in the queue.
+
+  The number is an integer between `0` and `max_count`
   """
   @type count :: non_neg_integer
 
@@ -32,9 +33,11 @@ defmodule LQueue do
   @type element :: term
 
   @typedoc """
-  The structure representing the limited length queue. It includes the current
-  number of elements, max number of elements, rear list and front list.
-  Note that this structure should be considered as opaque by other modules.
+  The structure representing the limited length queue.
+
+  It includes the current number of elements, max number of elements, rear
+  list and front list. Note that this structure should be considered as
+  opaque by other modules.
   """
   @type t :: %LQueue{
     count: count,
@@ -110,8 +113,9 @@ defmodule LQueue do
   def max_count(%LQueue{max_count: max_count}), do: max_count
 
   @doc """
-  Pushes a new element to the rear of the queue. When pushing to a full queue,
-  the front element will be discarded.
+  Pushes a new element to the rear of the queue.
+
+  When pushing to a full queue, the front element will be discarded.
 
   ## Examples
 
@@ -138,8 +142,9 @@ defmodule LQueue do
   end
 
   @doc """
-  Pushes a new element to the front of the queue. When pushing to a full queue,
-  the rear element will be discarded.
+  Pushes a new element to the front of the queue.
+
+  When pushing to a full queue, the rear element will be discarded.
 
   ## Examples
 
@@ -167,8 +172,9 @@ defmodule LQueue do
   end
 
   @doc """
-  Pops an element from the front of the queue. If the queue is empty, `nil` is
-  returned.
+  Pops an element from the front of the queue.
+
+  If the queue is empty, `nil` is returned.
 
   ## Examples
 
@@ -197,8 +203,9 @@ defmodule LQueue do
   end
 
   @doc """
-  Pops an element from the rear of the queue. If the queue is empty, `nil` is
-  returned.
+  Pops an element from the rear of the queue.
+
+  If the queue is empty, `nil` is returned.
 
   ## Examples
 
@@ -227,8 +234,9 @@ defmodule LQueue do
   end
 
   @doc """
-  Gets the front element of the queue. It does not change the queue. When the
-  queue is empty, `nil` is returned.
+  Gets the front element of the queue.
+
+  It does not change the queue. When the queue is empty, `nil` is returned.
 
   ## Examples
 
@@ -245,8 +253,9 @@ defmodule LQueue do
   def get(%LQueue{r: r, f: f}), do: get(r, f)
 
   @doc """
-  Gets the rear element of the queue. It does not change the queue. When the
-  queue is empty, `nil` is returned.
+  Gets the rear element of the queue.
+
+  It does not change the queue. When the queue is empty, `nil` is returned.
 
   ## Examples
 
@@ -257,14 +266,15 @@ defmodule LQueue do
       2
   """
   @spec get_rear(t) :: element | nil
-  def get_rear(lqueu)
+  def get_rear(lqueue)
 
   def get_rear(%LQueue{count: 0, r: [], f: []}), do: nil
   def get_rear(%LQueue{r: r, f: f}), do: get_rear(r, f)
 
   @doc """
-  Drops the front element of the queue. When the queue is empty, it is not
-  changed.
+  Drops the front element of the queue.
+
+  When the queue is empty, it is not changed.
 
   ## Examples
 
@@ -290,8 +300,9 @@ defmodule LQueue do
   end
 
   @doc """
-  Drops the rear element of the queue. When the queue is empty, it is not
-  changed.
+  Drops the rear element of the queue.
+
+  When the queue is empty, it is not changed.
 
   ## Examples
 
@@ -317,9 +328,11 @@ defmodule LQueue do
   end
 
   @doc """
-  Converts the list to a queue. The elements are pushed into the queue starting
-  with the list head. If the list has more elements than the `max_count` of
-  the queue, those that can't fit in the queue (at the front) are discarded.
+  Converts the list to a queue.
+
+  The elements are pushed into the queue starting with the list head. If the
+  list has more elements than the `max_count` of the queue, those that can't
+  fit in the queue (at the front) are discarded.
 
   ## Examples
 

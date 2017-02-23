@@ -16,13 +16,13 @@ defmodule LQueue.Mixfile do
   def application, do: []
 
   defp deps do
-    [{:dialyxir, "~> 0.3.5", only: :dev},
-     {:ex_doc, "~> 0.14", only: :dev}]
+    [{:ex_doc, "~> 0.15", only: :dev}]
   end
 
   defp docs do
     [source_url: "https://github.com/jur0/lqueue",
-     source_ref: "v#{@version}"]
+     source_ref: "v#{@version}",
+     main: "LQueue"]
   end
 
   defp description do
@@ -34,5 +34,4 @@ defmodule LQueue.Mixfile do
      licenses: ["MIT"],
      links: %{"Github" => "https://github.com/jur0/lqueue"}]
   end
-
 end
