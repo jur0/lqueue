@@ -55,6 +55,8 @@ defmodule LQueue do
       %LQueue{count: 0, max_count: 5, r: [], f: []}
   """
   @spec new(max_count) :: t
+  def new(max_count)
+
   def new(max_count) when max_count > 0, do: %LQueue{max_count: max_count}
 
   @doc """
@@ -69,6 +71,8 @@ defmodule LQueue do
       true
   """
   @spec full?(t) :: boolean
+  def full?(lqueue)
+
   def full?(%LQueue{count: max_count, max_count: max_count}), do: true
   def full?(_lq), do: false
 
@@ -85,6 +89,8 @@ defmodule LQueue do
       true
   """
   @spec clear(t) :: t
+  def clear(lqueue)
+
   def clear(%LQueue{max_count: max_count}), do: %LQueue{max_count: max_count}
 
   @doc """
@@ -99,6 +105,8 @@ defmodule LQueue do
       2
   """
   @spec max_count(t) :: max_count
+  def max_count(lqueue)
+
   def max_count(%LQueue{max_count: max_count}), do: max_count
 
   @doc """
@@ -115,6 +123,8 @@ defmodule LQueue do
       [2, 10]
   """
   @spec push(t, element) :: t
+  def push(lqueue, element)
+
   def push(%LQueue{count: count, max_count: max_count, r: r} = lq, elem)
       when count < max_count do
     %{lq | count: count + 1, r: [elem|r]}
@@ -142,6 +152,8 @@ defmodule LQueue do
       [5, 1]
   """
   @spec push_front(t, element) :: t
+  def push_front(lqueue, element)
+
   def push_front(%LQueue{count: count, max_count: max_count, f: f} = lq, elem)
       when count < max_count do
     %{lq | count: count + 1, f: [elem|f]}
@@ -171,6 +183,8 @@ defmodule LQueue do
       true
   """
   @spec pop(t) :: {element | nil, t}
+  def pop(lqueue)
+
   def pop(%LQueue{count: 0, r: [], f: []} = lq) do
     {nil, lq}
   end
@@ -199,6 +213,8 @@ defmodule LQueue do
       true
   """
   @spec pop_rear(t) :: {element | nil, t}
+  def pop_rear(lqueue)
+
   def pop_rear(%LQueue{count: 0, r: [], f: []} = lq) do
     {nil, lq}
   end
@@ -223,6 +239,8 @@ defmodule LQueue do
       1
   """
   @spec get(t) :: element | nil
+  def get(lqueue)
+
   def get(%LQueue{count: 0, r: [], f: []}), do: nil
   def get(%LQueue{r: r, f: f}), do: get(r, f)
 
@@ -239,6 +257,8 @@ defmodule LQueue do
       2
   """
   @spec get_rear(t) :: element | nil
+  def get_rear(lqueu)
+
   def get_rear(%LQueue{count: 0, r: [], f: []}), do: nil
   def get_rear(%LQueue{r: r, f: f}), do: get_rear(r, f)
 
@@ -256,6 +276,8 @@ defmodule LQueue do
       [2, 3]
   """
   @spec drop(t) :: t
+  def drop(lqueue)
+
   def drop(%LQueue{count: 0, r: [], f: []} = lq) do
     lq
   end
@@ -281,6 +303,8 @@ defmodule LQueue do
       [1, 2]
   """
   @spec drop_rear(t) :: t
+  def drop_rear(lqueue)
+
   def drop_rear(%LQueue{count: 0, r: [], f: []} = lq) do
     lq
   end
@@ -309,6 +333,8 @@ defmodule LQueue do
       [3, 4, 5]
   """
   @spec from_list([element], max_count) :: t
+  def from_list(list, max_count)
+
   def from_list([], max_count) when max_count > 0, do: new(max_count)
   def from_list(list, max_count) when is_list(list) and max_count > 0 do
     count = list |> length |> min(max_count)
