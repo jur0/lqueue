@@ -8,27 +8,14 @@ of elements. If more are added, the elements from the top of the queue are
 
 ## Installation
 
-  1. Add `lqueue` to your list of dependencies in `mix.exs`:
+If [available in Hex](https://hex.pm/docs/publish), the package can be
+installed by adding `lqueue` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [{:lqueue, "~> 1.0"}]
-    end
-    ```
-
-  2. Ensure `lqueue` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:lqueue]]
-    end
-    ```
-
-  3. Download the dependency:
-
-    ```bash
-     $ mix deps.get
-    ```
+```elixir
+def deps do
+  [{:lqueue, "~> 1.1"}]
+end
+```
 
 ## Usage
 

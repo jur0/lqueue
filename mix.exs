@@ -1,12 +1,12 @@
 defmodule LQueue.Mixfile do
   use Mix.Project
 
-  @version "1.0.1"
+  @version "1.1.0"
 
   def project do
     [app: :lqueue,
      version: @version,
-     elixir: "~> 1.3",
+     elixir: "~> 1.4",
      deps: deps(),
      docs: docs(),
      description: description(),
@@ -32,6 +32,6 @@ defmodule LQueue.Mixfile do
   defp package do
     [maintainers: ["Juraj Hlista"],
      licenses: ["MIT"],
-     links: %{"Github" => "https://github.com/jur0/lqueue"}]
+     links: %{"GitHub" => "https://github.com/jur0/lqueue"}]
   end
 end
