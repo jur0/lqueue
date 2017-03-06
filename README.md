@@ -1,6 +1,7 @@
 # LQueue
 
 [![Build Status](https://travis-ci.org/jur0/lqueue.svg?branch=master)](https://travis-ci.org/jur0/lqueue)
+[![Hex.pm](https://img.shields.io/hexpm/v/lqueue.svg)](https://hex.pm/packages/lqueue)
 
 Double-ended queue with limited length. It can hold just specified amount
 of elements. If more are added, the elements from the top of the queue are
