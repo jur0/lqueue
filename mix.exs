@@ -4,25 +4,25 @@ defmodule LQueue.Mixfile do
   @version "1.1.0"
 
   def project do
-    [app: :lqueue,
-     version: @version,
-     elixir: "~> 1.4",
-     deps: deps(),
-     docs: docs(),
-     description: description(),
-     package: package()]
+    [
+      app: :lqueue,
+      version: @version,
+      elixir: "~> 1.4",
+      deps: deps(),
+      docs: docs(),
+      description: description(),
+      package: package()
+    ]
   end
 
   def application, do: []
 
   defp deps do
-    [{:ex_doc, "~> 0.15", only: :dev}]
+    [{:ex_doc, "~> 0.19", only: :dev}]
   end
 
   defp docs do
-    [source_url: "https://github.com/jur0/lqueue",
-     source_ref: "v#{@version}",
-     main: "LQueue"]
+    [source_url: "https://github.com/jur0/lqueue", source_ref: "v#{@version}", main: "LQueue"]
   end
 
   defp description do
@@ -30,8 +30,10 @@ defmodule LQueue.Mixfile do
   end
 
   defp package do
-    [maintainers: ["Juraj Hlista"],
-     licenses: ["MIT"],
-     links: %{"GitHub" => "https://github.com/jur0/lqueue"}]
+    [
+      maintainers: ["Juraj Hlista"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/jur0/lqueue"}
+    ]
   end
 end
