@@ -415,7 +415,6 @@ defimpl Enumerable, for: LQueue do
     {:done, acc}
   end
 
-  @doc since: "1.6.0"
   @type slicing_fun :: (start :: non_neg_integer, length :: pos_integer -> [term()])
   @spec slice(LQueue.t()) ::
           {:ok, size :: non_neg_integer(), slicing_fun()}
